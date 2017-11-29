@@ -12,4 +12,12 @@ public class No {
 	public No(int tabela[][]) {
 		this.tabela = tabela;
 	}
+
+	public boolean isEmpty(int altura) {
+		// TODO Auto-generated method stub
+		if (filhos.get(altura) == null)
+			return true;
+		else
+			return false;
+	}
 }

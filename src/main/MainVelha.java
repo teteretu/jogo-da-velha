@@ -22,18 +22,19 @@ public class MainVelha {
 	    */
 		
 		zeraTabuleiro(tabuleiro);
+		
+		No raiz = new No(tabuleiro);
 		tabuleiro[0][0] = 1;
 		tabuleiro[0][1] = 1;
-		
 		No f1 = new No(tabuleiro);
-		No f2 = new No(tabuleiro);
-		tabuleiro[0][0] = 1;
-		tabuleiro[0][1] = -1;
-		No f3 = new No(tabuleiro);
-		tabuleiro[0][2] = 1;
 		
-		f1.filhos.add(f2);
-		f1.filhos.add(f3);
+		raiz.filhos.add(f1);
+		
+		tabuleiro[0][0] = -1;
+		tabuleiro[0][1] = -1;
+		No f2 = new No(tabuleiro);
+	
+		raiz.filhos.add(f2);
 		
 		zeraTabuleiro(tabuleiro);
 		
@@ -46,7 +47,7 @@ public class MainVelha {
 		f2.filhos.add(f5);
 
 
-		buscaProfundidade(f1);
+		buscaProfundidade(raiz, 0);
 	}
 	
 		
@@ -276,11 +277,17 @@ public class MainVelha {
 	///árvore///
 	////////////
 	
-	private static void buscaProfundidade(No base) {
+	private static void buscaProfundidade(No raiz, int altura) {
 		
-		for (No filho : base.filhos)
-			for (int i = 0; i < base.filhos.size(); i++)
-				exibeTabuleiro(filho.filhos.get(i).tabela);
+		//buscaProfundidade(raiz.filhos.get(altura), altura);
+		exibeTabuleiro(raiz.tabela);
+		
+		while(!raiz.filhos.get(altura).isEmpty(altura)) {//enquanto houver nós
+			exibeTabuleiro(raiz.tabela);
+			altura++;
+			
+		}
+		 
 			
 	}
 }
