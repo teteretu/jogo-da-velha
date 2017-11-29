@@ -8,10 +8,10 @@ public class MainVelha {
 	public static int vez;
 	static boolean continuar;
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		//TODO Auto-generated method stub
 		 
 		int[][] tabuleiro = new int[DIM][DIM];
- 
+		 /*
 	    do {
 	        vez=1;
 	        continuar = menu();
@@ -19,8 +19,39 @@ public class MainVelha {
 	            jogar(tabuleiro);
 	 
 	    }while(continuar);
+	    */
+		
+		zeraTabuleiro(tabuleiro);
+		tabuleiro[0][0] = 1;
+		tabuleiro[0][1] = 1;
+		
+		No f1 = new No(tabuleiro);
+		No f2 = new No(tabuleiro);
+		tabuleiro[0][0] = 1;
+		tabuleiro[0][1] = -1;
+		No f3 = new No(tabuleiro);
+		tabuleiro[0][2] = 1;
+		
+		f1.filhos.add(f2);
+		f1.filhos.add(f3);
+		
+		zeraTabuleiro(tabuleiro);
+		
+		No f4 = new No(tabuleiro);
+		tabuleiro[1][0] = -1;
+		No f5 = new No(tabuleiro);
+		tabuleiro[1][1] = 1;
+		
+		f2.filhos.add(f4);
+		f2.filhos.add(f5);
+
+
+		buscaProfundidade(f1);
 	}
 	
+		
+		
+		
 	static boolean menu() {
 	    int opcao;
 	 
@@ -92,6 +123,7 @@ public class MainVelha {
 	        clear();
 	        exibeTabuleiro(tabuleiro);
 	        jogada(tabuleiro);
+	        jogadaMaquina(tabuleiro);
 	        
 	    }while(checaTermino(tabuleiro, vez) == false);
 	}
@@ -213,5 +245,42 @@ public class MainVelha {
 	        tabuleiro[linha][coluna] = -1;
 	    else
 	        tabuleiro[linha][coluna] = 1;
+	}
+	
+	static void jogadaMaquina(int tabuleiro[][]) {
+		int linha, coluna;
+	    vez++;
+	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
+	 
+	    do {
+	    	System.out.print("Linha: ");
+	    	linha = entrada.nextInt();
+	        linha--;
+	 
+	        System.out.print("Coluna: ");
+	        coluna = entrada.nextInt();
+	        coluna--;
+	 
+	        if(checaLocal(tabuleiro, linha, coluna) == false)
+	            System.out.println("Posicao ocupada ou inexistente, escolha outra.");
+	        
+	    } while(checaLocal(tabuleiro, linha, coluna) == false);
+	    
+	    if((vez%2) != 0)
+	        tabuleiro[linha][coluna] = -1;
+	    else
+	        tabuleiro[linha][coluna] = 1;
+	}
+	
+	////////////
+	///árvore///
+	////////////
+	
+	private static void buscaProfundidade(No base) {
+		
+		for (No filho : base.filhos)
+			for (int i = 0; i < base.filhos.size(); i++)
+				exibeTabuleiro(filho.filhos.get(i).tabela);
+			
 	}
 }
