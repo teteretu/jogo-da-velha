@@ -141,4 +141,39 @@ class Jogar {
 	    
 	    return false;
 	}
+  	/////////////
+  	//Gerar tab//
+  	/////////////
+  	public static void geraTabuleiro(No raiz) {
+      	int linha  = 0;
+      	int coluna = 0;
+      	int[][] newTabuleiro = new int[DIM][DIM];
+      	newTabuleiro = tabCopy(raiz.tabuleiro);
+      
+      	while (coluna < 3) {
+            while (linha < 3) {
+              
+                if (raiz.tabuleiro[linha][coluna] == 0) {
+                    newTabuleiro[linha][coluna] = -1;
+                    No filho = new No(newTabuleiro);
+                    raiz.filhos.add(filho);
+                    newTabuleiro = tabCopy(raiz.tabuleiro);
+                    linha++;
+                }
+              	linha++;
+            }
+          	linha = 0;
+          	coluna++;
+        }
+    }
+  	
+  	public static int[][] tabCopy(int[][] tab) {
+  		int[][] newTabuleiro = new int[DIM][DIM];
+  		for (int i = 0;i < DIM; i++) 
+  			for (int j = 0;j < DIM; j++)
+  				newTabuleiro[i][j] = tab[i][j];
+  		
+  		return newTabuleiro;
+  	}
+  	
 }

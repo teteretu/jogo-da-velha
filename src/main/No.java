@@ -23,24 +23,5 @@ class No {
 			return false;
     
 	}*/
-  	public static void geraTabuleiro(No raiz) {
-      	int linha  = 0;
-      	int coluna = 0;
-      	int[][] newTabuleiro = raiz.tabuleiro;
-      
-      	while (coluna < 3) {
-            while (linha < 3) {
-              
-                if (raiz.tabuleiro[linha][coluna] == 0) {
-                    newTabuleiro[linha][coluna] = -1;
-                    No filho = new No(newTabuleiro);
-                    raiz.filhos.add(filho);
-                }
-                newTabuleiro = raiz.tabuleiro;
-              	linha++;
-            }
-          	linha = 0;
-          	coluna++;
-        }
-    }
+  	
 }

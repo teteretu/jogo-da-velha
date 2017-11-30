@@ -117,14 +117,15 @@ class MainVelha {
 	////////////
 	///árvore///
 	////////////
-	public static boolean buscaProfundidade(No raiz) {
+	public static void buscaProfundidade(No raiz) {
 		//buscaProfundidade(raiz.filhos.get(altura), altura);
-      	No.geraTabuleiro(raiz);
-      	exibeTabuleiro(raiz.tabuleiro);
-		for (No filho : raiz.filhos) {//varre os filhos, até que não exista mais nenhum
+      	Jogar.geraTabuleiro(raiz);
+      	for (int i = 0; i < raiz.filhos.size(); i++)
+      		exibeTabuleiro(raiz.filhos.get(i).tabuleiro);
+		/*for (No filho : raiz.filhos) {//varre os filhos, até que não exista mais nenhum
       		buscaProfundidade(filho);
         }
 		return true;
-	
+		 */
     }
 }
