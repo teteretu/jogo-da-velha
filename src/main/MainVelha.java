@@ -2,16 +2,17 @@ package main;
 
 import java.util.Scanner;
 
-public class MainVelha {
-	public final static int DIM = 3;
+class MainVelha {
+    public final static int DIM = 3;
 	static Scanner entrada = new Scanner(System.in);
 	public static int vez;
 	static boolean continuar;
+  
 	public static void main(String[] args) {
 		//TODO Auto-generated method stub
 		 
 		int[][] tabuleiro = new int[DIM][DIM];
-		 /*
+      	
 	    do {
 	        vez=1;
 	        continuar = menu();
@@ -19,40 +20,13 @@ public class MainVelha {
 	            jogar(tabuleiro);
 	 
 	    }while(continuar);
-	    */
 		
-		zeraTabuleiro(tabuleiro);
-		
-		No raiz = new No(tabuleiro);
-		tabuleiro[0][0] = 1;
-		tabuleiro[0][1] = 1;
-		No f1 = new No(tabuleiro);
-		
-		raiz.filhos.add(f1);
-		
-		tabuleiro[0][0] = -1;
-		tabuleiro[0][1] = -1;
-		No f2 = new No(tabuleiro);
-	
-		raiz.filhos.add(f2);
-		
-		zeraTabuleiro(tabuleiro);
-		
-		No f4 = new No(tabuleiro);
-		tabuleiro[1][0] = -1;
-		No f5 = new No(tabuleiro);
-		tabuleiro[1][1] = 1;
-		
-		f2.filhos.add(f4);
-		f2.filhos.add(f5);
-
-
-		buscaProfundidade(raiz, 0);
 	}
 	
 		
-		
-		
+	////////////
+	///menus////
+	////////////	
 	static boolean menu() {
 	    int opcao;
 	 
@@ -74,7 +48,10 @@ public class MainVelha {
 	        }
 	    return false;
 	}
-	 
+  
+	////////////
+	////util////
+	////////////
 	public static void clear() {
 	    int count=0;
 	 
@@ -116,178 +93,38 @@ public class MainVelha {
 	    }
 	    System.out.println("");
 	}
-	 
+  
+	////////////
+	///jogar////
+	////////////
 	public static void jogar(int tabuleiro[][]) {
 	    zeraTabuleiro(tabuleiro);
-	 
+	 	Jogar jogada = new Jogar(tabuleiro);
+      
 	    do {
 	        clear();
 	        exibeTabuleiro(tabuleiro);
-	        jogada(tabuleiro);
-	        jogadaMaquina(tabuleiro);
+          	jogada.min(tabuleiro);
+          	if (Jogar.checaTermino(tabuleiro, vez)) break;
+          	
+          	exibeTabuleiro(tabuleiro);
+          	jogada.max(tabuleiro);
+          
 	        
-	    }while(checaTermino(tabuleiro, vez) == false);
-	}
-	 
-	 
-	static boolean checaLocal(int tabuleiro[][], int linha, int coluna) {
-	    if(linha < 0 || linha > (DIM-1) || coluna < 0 || coluna > (DIM-1) || tabuleiro[linha][coluna] != 0)
-	        return false;
-	    else
-	        return true;
-	}
-	 
-	static boolean checaLinha (int tabuleiro[][]) {
-	    int linha, coluna, soma;
-	 
-	    for(linha = 0 ; linha < DIM ; linha++) {
-	        soma=0;
-	 
-	        for(coluna = 0 ; coluna < DIM ; coluna++)
-	            soma += tabuleiro[linha][coluna];
-	 
-	        if(soma==DIM || soma == (-1)*DIM)
-	            return true;
-	    }
-	 
-	    return false;
-	}
-	 
-	static boolean checaColuna(int tabuleiro[][]) {
-	    int linha, coluna,
-	        soma;
-	    
-	    for(coluna = 0 ; coluna < DIM ; coluna++) {
-	        soma=0;
-	 
-	        for(linha = 0 ; linha < DIM ; linha++)
-	            soma += tabuleiro[linha][coluna];
-	 
-	        if(soma==DIM || soma == (-1)*DIM)
-	            return true;
-	    }
-	    return false;
-	}
-	 
-	static boolean checaDiagonal(int tabuleiro[][]) {
-	    int linha, diagonal_principal=0, diagonal_secundaria=0;
-	 
-	    for(linha = 0 ; linha < DIM ; linha++) {
-	        diagonal_principal += tabuleiro[linha][linha];
-	        diagonal_secundaria += tabuleiro[linha][DIM-linha-1];
-	    }
-	 
-	    if(diagonal_principal==DIM || diagonal_principal==(-1)*DIM ||
-	       diagonal_secundaria==DIM || diagonal_secundaria==(-1)*DIM)
-	       return true;
-	 
-	    return false;
-	}
-	 
-	static boolean checaEmpate(int tabuleiro[][]) {
-	    int linha, coluna;
-	 
-	    for(linha = 0 ; linha < DIM ; linha++)
-	        for(coluna = 0 ; coluna < DIM ; coluna++)
-	            if(tabuleiro[linha][coluna] == 0)
-	                return false;
-	 
-	    return true;
-	}
-	 
-	static boolean checaTermino(int tabuleiro[][], int vez) {
-	    if(checaLinha(tabuleiro)) {
-	        System.out.println("Jogo encerrado. Jogador " + (vez%2)+1 + " venceu !\n");
-	        exibeTabuleiro(tabuleiro);
-	        return true;
-	    }
-	    
-	    if(checaColuna(tabuleiro)) {
-	    	System.out.println("Jogo encerrado. Jogador " + (vez%2)+1 + " venceu !\n");
-	        exibeTabuleiro(tabuleiro);
-	        return true;
-	    }
-	    
-	    if(checaDiagonal(tabuleiro)) {
-	    	System.out.println("Jogo encerrado. Jogador " + (vez%2)+1 + " venceu !\n");
-	        exibeTabuleiro(tabuleiro);
-	        return true;
-	    }
-	    
-	    if(checaEmpate(tabuleiro)) {
-	        System.out.println("Jogo encerrado. Ocorreu um empate! !\n\n");
-	        exibeTabuleiro(tabuleiro);
-	        return true;
-	    }
-	    
-	    return false;
-	}
-	 
-	static void jogada(int tabuleiro[][]) {
-	    int linha, coluna;
-	    vez++;
-	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
-	 
-	    do {
-	    	System.out.print("Linha: ");
-	    	linha = entrada.nextInt();
-	        linha--;
-	 
-	        System.out.print("Coluna: ");
-	        coluna = entrada.nextInt();
-	        coluna--;
-	 
-	        if(checaLocal(tabuleiro, linha, coluna) == false)
-	            System.out.println("Posicao ocupada ou inexistente, escolha outra.");
-	        
-	    } while(checaLocal(tabuleiro, linha, coluna) == false);
-	    
-	    if((vez%2) != 0)
-	        tabuleiro[linha][coluna] = -1;
-	    else
-	        tabuleiro[linha][coluna] = 1;
-	}
-	
-	static void jogadaMaquina(int tabuleiro[][]) {
-		int linha, coluna;
-	    vez++;
-	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
-	 
-	    do {
-	    	System.out.print("Linha: ");
-	    	linha = entrada.nextInt();
-	        linha--;
-	 
-	        System.out.print("Coluna: ");
-	        coluna = entrada.nextInt();
-	        coluna--;
-	 
-	        if(checaLocal(tabuleiro, linha, coluna) == false)
-	            System.out.println("Posicao ocupada ou inexistente, escolha outra.");
-	        
-	    } while(checaLocal(tabuleiro, linha, coluna) == false);
-	    
-	    if((vez%2) != 0)
-	        tabuleiro[linha][coluna] = -1;
-	    else
-	        tabuleiro[linha][coluna] = 1;
+	    }while(Jogar.checaTermino(tabuleiro, vez) == false);
 	}
 	
 	////////////
 	///árvore///
 	////////////
-	
-	private static void buscaProfundidade(No raiz, int altura) {
-		
+	public static boolean buscaProfundidade(No raiz) {
 		//buscaProfundidade(raiz.filhos.get(altura), altura);
-		exibeTabuleiro(raiz.tabela);
-		
-		while(!raiz.filhos.get(altura).isEmpty(altura)) {//enquanto houver nós
-			exibeTabuleiro(raiz.tabela);
-			altura++;
-			
-		}
-		 
-			
-	}
+      	No.geraTabuleiro(raiz);
+      	exibeTabuleiro(raiz.tabuleiro);
+		for (No filho : raiz.filhos) {//varre os filhos, até que não exista mais nenhum
+      		buscaProfundidade(filho);
+        }
+		return true;
+	
+    }
 }
