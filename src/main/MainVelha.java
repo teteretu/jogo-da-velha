@@ -43,7 +43,7 @@ class MainVelha {
 	           case 0:
 	                return false;
 	           default:
-	                clear();
+	                //clear();
 	                System.out.println("Opcao invalida. Tente de novo!\n");
 	        }
 	    return false;
@@ -52,6 +52,7 @@ class MainVelha {
 	////////////
 	////util////
 	////////////
+  /*
 	public static void clear() {
 	    int count=0;
 	 
@@ -59,7 +60,7 @@ class MainVelha {
 	        System.out.println("");
 	        count++;
 	    }
-	}
+	}*/
 	 
 	public static void zeraTabuleiro(int tabuleiro[][]) {
 	    
@@ -100,32 +101,60 @@ class MainVelha {
 	public static void jogar(int tabuleiro[][]) {
 	    zeraTabuleiro(tabuleiro);
 	 	Jogar jogada = new Jogar(tabuleiro);
-      
+      	No arvore = new No(tabuleiro);
+      	
+      	Jogar.geraTabuleiro(arvore, vez);
+
+      	gerarArvore(arvore);// gera toda a árvore do min max
 	    do {
-	        clear();
-	        exibeTabuleiro(tabuleiro);
-          	jogada.min(tabuleiro);
-          	if (Jogar.checaTermino(tabuleiro, vez)) break;
-          	
-          	exibeTabuleiro(tabuleiro);
-          	jogada.max(tabuleiro);
-          
+	        //clear();
+          	exibeTabuleiro(arvore.tabuleiro);
+          	jogada.max(arvore);
 	        
+          	if (Jogar.checaTermino(tabuleiro, vez)) break;
+	
+          	exibeTabuleiro(tabuleiro);
+          	jogada.min(tabuleiro);
+          
 	    }while(Jogar.checaTermino(tabuleiro, vez) == false);
 	}
 	
 	////////////
 	///árvore///
 	////////////
-	public static void buscaProfundidade(No raiz) {
-		//buscaProfundidade(raiz.filhos.get(altura), altura);
-      	Jogar.geraTabuleiro(raiz);
-      	for (int i = 0; i < raiz.filhos.size(); i++)
-      		exibeTabuleiro(raiz.filhos.get(i).tabuleiro);
-		/*for (No filho : raiz.filhos) {//varre os filhos, até que não exista mais nenhum
+  	
+  	public static int gerarArvore(No raiz) {
+      	int run = 0;
+      	for (No filho : raiz.filhos) 
+      		exibeTabuleiro(filho.tabuleiro);
+      	
+        for (No filho : raiz.filhos) {
+        	vez++;
+        	run = Jogar.geraTabuleiro(filho, vez);
+        	if (run != 1)
+        		gerarArvore(filho);
+        	else
+        		return 0;
+        	
+        }
+          	
+        
+        
+      	return 1;
+    }
+  
+  	public static void buscaProfundidade(No raiz) {
+        
+  		raiz.tabuleiro[0][0] = -1;
+  		/*
+      	exibeTabuleiro(raiz.filhos.get(raiz.filhos.size() - 1).tabuleiro);
+      	
+      	No.geraTabuleiro(raiz);
+      	exibeTabuleiro(raiz.tabuleiro);
+		for (No filho : raiz.filhos) {//varre os filhos, até que não exista mais nenhum
       		buscaProfundidade(filho);
         }
 		return true;
-		 */
+  		 */
     }
 }

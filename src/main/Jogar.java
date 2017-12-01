@@ -30,19 +30,15 @@ class Jogar {
 	        
 	    } while(checaLocal(tabuleiro, linha, coluna) == false);
 	    
-	    if((MainVelha.vez%2) != 0)
-	        tabuleiro[linha][coluna] = -1;
-	    else
-	        tabuleiro[linha][coluna] = 1;
+	    
+	    tabuleiro[linha][coluna] = 1;
   }
   
-  public void max(int tabuleiro[][]) {//máquina
+  public void max(No arvore) {//máquina
 	    MainVelha.vez++;
 	    System.out.println("\n--> Jogador " + ((MainVelha.vez % 2) + 1));
 	 
-	    
-        No raiz = new No(tabuleiro);
-	    MainVelha.buscaProfundidade(raiz);
+	    MainVelha.buscaProfundidade(arvore);
     
   }
   
@@ -141,12 +137,15 @@ class Jogar {
 	    
 	    return false;
 	}
-  	/////////////
+  
+ 	/////////////
   	//Gerar tab//
   	/////////////
-  	public static void geraTabuleiro(No raiz) {
+  	public static int geraTabuleiro(No raiz, int vez) {
+      	//retorna se o da vez ganhou ou n
       	int linha  = 0;
       	int coluna = 0;
+      	int end = 0;//para saber quantas posições vagas
       	int[][] newTabuleiro = new int[DIM][DIM];
       	newTabuleiro = tabCopy(raiz.tabuleiro);
       
@@ -154,17 +153,34 @@ class Jogar {
             while (linha < 3) {
               
                 if (raiz.tabuleiro[linha][coluna] == 0) {
-                    newTabuleiro[linha][coluna] = -1;
-                    No filho = new No(newTabuleiro);
-                    raiz.filhos.add(filho);
+                  	end++;
+                  	if ((vez%2) != 0)
+                      	newTabuleiro[linha][coluna] = -1;
+                  	else
+                      newTabuleiro[linha][coluna] = 1;
+                  
+                  	No filho = new No(newTabuleiro);
+                  	filho.generateUtility(filho);//soma a utilidade dos seus filhos
+                  	raiz.filhos.add(filho);
                     newTabuleiro = tabCopy(raiz.tabuleiro);
-                    linha++;
+                  
+                    if (checaTermino(filho.tabuleiro, vez)) {
+                    	if ((vez%2) != 0)
+                    		raiz.setUtility(1);//se ganhou soma a utilidade
+                    	else
+                    		raiz.setUtility(-1);//se ganhou soma a utilidade
+                      	return 1;
+                    }
                 }
               	linha++;
             }
           	linha = 0;
           	coluna++;
         }
+      if (end<=1)
+        return 1;//não ha mais possibilidades
+      
+      return 0;//não terminou
     }
   	
   	public static int[][] tabCopy(int[][] tab) {
@@ -175,5 +191,4 @@ class Jogar {
   		
   		return newTabuleiro;
   	}
-  	
 }
