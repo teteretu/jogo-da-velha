@@ -3,15 +3,39 @@ package main;
 import java.util.Scanner;
 
 class Jogar {
-  public int[][] tabuleiro = new int[MainVelha.DIM][MainVelha.DIM];
-  static Scanner entrada = new Scanner(System.in);
-  public final static int DIM = MainVelha.DIM;
+	public static int[][] tabuleiro = new int[MainVelha.DIM][MainVelha.DIM];
+	static Scanner entrada = new Scanner(System.in);
+	public final static int DIM = MainVelha.DIM;
+	 
+	public Jogar(int tabuleiro[][]) {
+	  	Jogar.tabuleiro = tabuleiro;
+	  	jogar();
+	}
   
-  public Jogar(int tabuleiro[][]) {
-    	this.tabuleiro = tabuleiro;
-  }
-  
-  public void min(int tabuleiro[][]) {//jogador
+	////////////
+	///jogar////
+	////////////
+	public static void jogar() {
+		zeraTabuleiro(tabuleiro);
+		No arvore = new No(tabuleiro);
+		new Arvore();
+		Arvore.geraTabuleiro(arvore, MainVelha.vez);//gera o primeiro tabuleiro para evitar bugs
+		
+		Arvore.gerarArvore(arvore);// gera toda a árvore do min max
+		
+		do {
+		  	exibeTabuleiro(arvore.tabuleiro);
+		  	arvore = max(arvore);
+		    
+		  	if (checaTermino(tabuleiro, MainVelha.vez)) break;
+		
+		  	exibeTabuleiro(tabuleiro);
+		  	min();
+		  
+		}while(!checaTermino(tabuleiro, MainVelha.vez));
+	}
+
+  public static void min() {//jogador
     	int linha, coluna;
 	    MainVelha.vez++;
 	    System.out.println("\n--> Jogador " + ((MainVelha.vez % 2) + 1));
@@ -34,14 +58,52 @@ class Jogar {
 	    tabuleiro[linha][coluna] = 1;
   }
   
-  public void max(No arvore) {//máquina
+  public static No max(No raiz) {//máquina
 	    MainVelha.vez++;
 	    System.out.println("\n--> Jogador " + ((MainVelha.vez % 2) + 1));
-	 
-	    MainVelha.buscaProfundidade(arvore);
-    
+	    
+	    boolean run = true;
+	    int i = 0;
+	    while(run && i < DIM) {
+	    	for (int j = 0; j < DIM; j++) {
+	    		if(tabuleiro[i][j] != 0) {
+	    			run = false;
+	    			break;
+	    		}
+	    	}
+	    	i++;
+	    }
+	    if (run = true) {
+	    	No filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
+    		tabuleiro = Arvore.tabCopy(filho.tabuleiro);
+    		return filho;
+	    }
+	    			
+	    for (No filho : raiz.filhos){
+	    	
+	    	if(filho.tabuleiro.equals(tabuleiro)) {
+	    		filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
+	    		tabuleiro = Arvore.tabCopy(filho.tabuleiro);
+	    		return filho;
+	    	}
+	    }
+	    
+	    return null;
   }
   
+  public static No melhorJogada(No raiz) {
+	  	int maior = raiz.filhos.get(0).utility;
+	  	No filhoRetorno = raiz.filhos.get(0);
+	  	
+	    for (No filho : raiz.filhos) {
+		    if (filho.utility > maior) {
+		    		maior = filho.utility;
+		    		filhoRetorno = filho;
+		    }
+	    }
+	    
+	    return filhoRetorno;
+  }
   ////////////
   ///Checar///
   ////////////
@@ -109,86 +171,67 @@ class Jogar {
 	 
 	    return true;
 	}
-  
+	//retorna 0 para empate 1 terminou -1 não terminou
   	static boolean checaTermino(int tabuleiro[][], int vez) {
 	    if(checaLinha(tabuleiro)) {
 	        System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
-	        MainVelha.exibeTabuleiro(tabuleiro);
 	        return true;
 	    }
 	    
 	    if(checaColuna(tabuleiro)) {
 	    	System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
-	        MainVelha.exibeTabuleiro(tabuleiro);
 	        return true;
 	    }
 	    
 	    if(checaDiagonal(tabuleiro)) {
 	    	System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
-	        MainVelha.exibeTabuleiro(tabuleiro);
 	        return true;
 	    }
 	    
 	    if(checaEmpate(tabuleiro)) {
 	        System.out.println("Jogo encerrado. Ocorreu um empate! !\n\n");
-	        MainVelha.exibeTabuleiro(tabuleiro);
 	        return true;
 	    }
 	    
 	    return false;
 	}
   
- 	/////////////
-  	//Gerar tab//
-  	/////////////
-  	public static int geraTabuleiro(No raiz, int vez) {
-      	//retorna se o da vez ganhou ou n
-      	int linha  = 0;
-      	int coluna = 0;
-      	int end = 0;//para saber quantas posições vagas
-      	int[][] newTabuleiro = new int[DIM][DIM];
-      	newTabuleiro = tabCopy(raiz.tabuleiro);
-      
-      	while (coluna < 3) {
-            while (linha < 3) {
-              
-                if (raiz.tabuleiro[linha][coluna] == 0) {
-                  	end++;
-                  	if ((vez%2) != 0)
-                      	newTabuleiro[linha][coluna] = -1;
-                  	else
-                      newTabuleiro[linha][coluna] = 1;
-                  
-                  	No filho = new No(newTabuleiro);
-                  	filho.generateUtility(filho);//soma a utilidade dos seus filhos
-                  	raiz.filhos.add(filho);
-                    newTabuleiro = tabCopy(raiz.tabuleiro);
-                  
-                    if (checaTermino(filho.tabuleiro, vez)) {
-                    	if ((vez%2) != 0)
-                    		raiz.setUtility(1);//se ganhou soma a utilidade
-                    	else
-                    		raiz.setUtility(-1);//se ganhou soma a utilidade
-                      	return 1;
-                    }
-                }
-              	linha++;
-            }
-          	linha = 0;
-          	coluna++;
-        }
-      if (end<=1)
-        return 1;//não ha mais possibilidades
-      
-      return 0;//não terminou
-    }
+ 	
   	
-  	public static int[][] tabCopy(int[][] tab) {
-  		int[][] newTabuleiro = new int[DIM][DIM];
-  		for (int i = 0;i < DIM; i++) 
-  			for (int j = 0;j < DIM; j++)
-  				newTabuleiro[i][j] = tab[i][j];
-  		
-  		return newTabuleiro;
-  	}
+	////////////
+	////util////
+	////////////
+	
+	public static void zeraTabuleiro(int tabuleiro[][]) {
+	  
+		int linha, coluna;
+	  for(linha = 0 ; linha < DIM ; linha++) {
+	      for(coluna = 0 ; coluna < DIM ; coluna++) {
+	          tabuleiro[linha][coluna] = 0;
+			}
+		}
+	}
+	
+	public static void exibeTabuleiro(int tabuleiro[][]) {
+		
+	  int linha, coluna;
+	  System.out.println("");
+	
+	  for(linha = 0 ; linha < DIM ; linha++) {
+	      for(coluna = 0 ; coluna < DIM ; coluna++) {
+	          if(tabuleiro[linha][coluna] == 0)
+	              System.out.print("    ");
+	          else
+	              if(tabuleiro[linha][coluna] == 1)
+	                  System.out.print("  X ");
+	              else
+	                  System.out.print("  O ");
+	
+	          if(coluna != (DIM-1))
+	              System.out.print("|");
+	      }
+	      System.out.println("");
+	  }
+	  System.out.println("");
+	}
 }

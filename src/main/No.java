@@ -29,6 +29,6 @@ class No {
   		for (No filho : raiz.filhos)
   			soma += filho.utility;
   		
-  		this.utility = soma;
+  		raiz.setUtility(soma);
   	}
 }
