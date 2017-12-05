@@ -40,47 +40,57 @@ public class Arvore {
 		//retorna se o da vez ganhou ou n
 		int linha  = 0;
 		int coluna = 0;
-		int end = 0;//para saber quantas posições vagas
+		
+		boolean run = true;
 		int[][] newTabuleiro = new int[DIM][DIM];
 		newTabuleiro = tabCopy(raiz.tabuleiro);
 	
-		while (coluna < 3) {
-			while (linha < 3) {
+		while (linha < DIM && run == true) {
+			while (coluna < DIM && run == true) {
 	      
 		        if (raiz.tabuleiro[linha][coluna] == 0) {
-		          	end++;
+		          	
 		          	
 		          	if ((this.vez%2) != 0)
 		              	newTabuleiro[linha][coluna] = -1;
 		          	else
-		              newTabuleiro[linha][coluna] = 1;
+		          		newTabuleiro[linha][coluna] = 1;
 		          
 		          	No filho = new No(newTabuleiro);
-		          	raiz.filhos.add(filho);
 		          	
-		            newTabuleiro = tabCopy(raiz.tabuleiro);
 		          
-		            if (Jogar.checaTermino(filho.tabuleiro, this.vez)) {//end and win
-		            	if (Jogar.checaEmpate(filho.tabuleiro))
+		            if (Jogar.checaTermino(filho.tabuleiro, this.vez)>=0) {//end and win
+		            	if (Jogar.checaTermino(filho.tabuleiro, this.vez) == 0)//se empatou
 		            		filho.setUtility(0);
 		            	else {
-			            	if ((Jogar.vez%2) != 0)
+			            	if ((Jogar.vez%2) != 0) {
 			            		filho.setUtility(1);//if win, some the utility
-			            	else
+			            	}
+			            	else {
 			            		filho.setUtility(-1);
+			            	}
 		            	}
-		            	filho.generateUtility(raiz);//some the utility of yours sons
-		            	return 1;
+		            	raiz.filhos.add(filho);
+		            	
+		            	raiz.generateUtility(raiz);
+		            	
+		            	run = false;
+		            }	else {
+		            	raiz.filhos.add(filho);
+		            	
+		            	raiz.generateUtility(raiz);
+		            	
+			            newTabuleiro = tabCopy(raiz.tabuleiro);
 		            }
 		            
 		        }//end if
-		      	linha++;
+		      	coluna++;
 		    }//end while
-	  	linha = 0;
-	  	coluna++;
+	  	coluna = 0;
+	  	linha++;
 		}//end while
 		
-		if (end<=1)
+		if ( run == false)
 			return 1;//não ha mais possibilidades
 		
 		return 0;//não terminou

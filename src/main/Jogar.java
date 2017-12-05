@@ -31,12 +31,12 @@ class Jogar {
 		  	exibeTabuleiro(this.tabuleiro);
 		  	arvore = max(arvore);
 		    
-		  	if (checaTermino(this.tabuleiro, vez)) break;
-		
 		  	exibeTabuleiro(this.tabuleiro);
+		  	
+		  	if (checaTermino(this.tabuleiro, vez) >= 0) break;
 		  	min();
 		  
-		}while(!checaTermino(this.tabuleiro, vez));
+		}while(checaTermino(this.tabuleiro, vez) < 0);//enquanto n terminar
 	}
 
   public void min() {//jogador
@@ -78,17 +78,23 @@ class Jogar {
 	    	i++;
 	    }
 	    if (true == run) {
-	    	No filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
-	    	this.tabuleiro = Arvore.tabCopy(filho.tabuleiro);
-    		return filho;
+	    	if (melhorJogada(raiz) != null) {
+		    	No filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
+		    	this.tabuleiro = Arvore.tabCopy(filho.tabuleiro);
+	    		return filho;
+    		}else
+    			return null;
 	    }
 	    			
 	    for (No filho : raiz.filhos){
-	    	
-	    	if(equals(filho.tabuleiro, this.tabuleiro)) {
-                No newFilho = melhorJogada(filho);//retorna o filho que tem a melhor jogada
-                this.tabuleiro = Arvore.tabCopy(newFilho.tabuleiro);
-	    		return newFilho;
+	    	if (melhorJogada(raiz) != null) {
+		    	if(equals(filho.tabuleiro, this.tabuleiro)) {
+	                if (melhorJogada(filho) != null) {
+	                	No newFilho = melhorJogada(filho);//retorna o filho que tem a melhor jogada
+	                	this.tabuleiro = Arvore.tabCopy(newFilho.tabuleiro);
+	                	return newFilho;
+	                }
+		    	}
 	    	}
 	    }
 	    System.out.println("\tERROR\n O sistema não detectou uma boa jogada");
@@ -107,17 +113,20 @@ class Jogar {
   }
   
   public static No melhorJogada(No raiz) {
-	  	int maior = raiz.filhos.get(0).utility;
-	  	No filhoRetorno = raiz.filhos.get(0);
-	  	
-	    for (No filho : raiz.filhos) {
-		    if (filho.utility > maior) {
-		    		maior = filho.utility;
-		    		filhoRetorno = filho;
+	  if (!raiz.filhos.isEmpty()) {// se não está vazio
+		  	int maior = raiz.filhos.get(0).utility;
+		  	No filhoRetorno = raiz.filhos.get(0);
+		  	
+		    for (No filho : raiz.filhos) {
+			    if (filho.utility > maior) {
+			    		maior = filho.utility;
+			    		filhoRetorno = filho;
+			    }
 		    }
-	    }
-	    
-	    return filhoRetorno;
+		    
+		    return filhoRetorno;
+	  }
+	  return null;
   }
   ////////////
   ///Checar///
@@ -187,28 +196,28 @@ class Jogar {
 	    return true;
 	}
 	//retorna 0 para empate 1 terminou -1 não terminou
-  	static boolean checaTermino(int tabuleiro[][], int vez) {
+  	static int checaTermino(int tabuleiro[][], int vez) {
 	    if(checaLinha(tabuleiro)) {
 	        System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
-	        return true;
+	        return 1;
 	    }
 	    
 	    if(checaColuna(tabuleiro)) {
 	    	System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
-	        return true;
+	        return 1;
 	    }
 	    
 	    if(checaDiagonal(tabuleiro)) {
 	    	System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
-	        return true;
+	        return 1;
 	    }
 	    
 	    if(checaEmpate(tabuleiro)) {
 	        System.out.println("Jogo encerrado. Ocorreu um empate! !\n\n");
-	        return true;
+	        return 0;
 	    }
 	    
-	    return false;
+	    return -1;
 	}
   
  	
