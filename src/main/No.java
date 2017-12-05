@@ -6,9 +6,7 @@ import java.util.List;
 
 class No {
 	public int[][] tabuleiro = new int[Jogar.DIM][Jogar.DIM];
-
 	public List<No> filhos = new ArrayList<No>();
-  
   	public int utility;
 
 	public No(int tabuleiro[][]) {

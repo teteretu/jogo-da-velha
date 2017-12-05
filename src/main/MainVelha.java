@@ -4,12 +4,14 @@ import java.util.Scanner;
 
 class MainVelha {
 	static Scanner entrada = new Scanner(System.in);
+	public static int vez;
 	static boolean continuar;
   
 	public static void main(String[] args) {
-	//TODO Auto-generated method stub
+		//TODO Auto-generated method stub
       	
 	    do {
+	        vez=1;
 	        continuar = menu();
 	        if(continuar) {
 	            new Jogar();

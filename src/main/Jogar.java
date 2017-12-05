@@ -1,43 +1,45 @@
 package main;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 class Jogar {
-        public final static int DIM = 3;
-	public static int[][] tabuleiro = new int[DIM][DIM];
+    public final static int DIM = 3;
+	public int[][] tabuleiro = new int[DIM][DIM];
 	static Scanner entrada = new Scanner(System.in);
 	public static int vez;
 	
-        public Jogar() {
-                Jogar.vez=1;
+    public Jogar() {
 	  	jogar();
 	}
   
 	////////////
 	///jogar////
 	////////////
-	public static void jogar() {
-		zeraTabuleiro(tabuleiro);
-		No arvore = new No(tabuleiro);
+	public void jogar() {
+		vez = 1;
+		zeraTabuleiro(this.tabuleiro);
+		No arvore = new No(this.tabuleiro);
 		
-		Arvore.geraTabuleiro(arvore, vez);//gera o primeiro tabuleiro para evitar bugs
+		Arvore tree = new Arvore();
 		
-		Arvore.gerarArvore(arvore);// gera toda a Ã¡rvore do min max
+		tree.geraTabuleiro(arvore);//gera o primeiro tabuleiro para evitar bugs
+		tree.setVez(2);
+		tree.gerarArvore(arvore);// gera toda a árvore do min max
 		
 		do {
-		  	exibeTabuleiro(tabuleiro);
+			vez = 1;
+		  	exibeTabuleiro(this.tabuleiro);
 		  	arvore = max(arvore);
 		    
-		  	if (checaTermino(tabuleiro, vez)) break;
+		  	if (checaTermino(this.tabuleiro, vez)) break;
 		
-		  	exibeTabuleiro(tabuleiro);
+		  	exibeTabuleiro(this.tabuleiro);
 		  	min();
 		  
-		}while(!checaTermino(tabuleiro, vez));
+		}while(!checaTermino(this.tabuleiro, vez));
 	}
 
-  public static void min() {//jogador
+  public void min() {//jogador
     	int linha, coluna;
 	    vez++;
 	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
@@ -51,24 +53,24 @@ class Jogar {
 	        coluna = entrada.nextInt();
 	        coluna--;
 	 
-	        if(checaLocal(tabuleiro, linha, coluna) == false)
+	        if(checaLocal(this.tabuleiro, linha, coluna) == false)
 	            System.out.println("Posicao ocupada ou inexistente, escolha outra.");
 	        
-	    } while(checaLocal(tabuleiro, linha, coluna) == false);
+	    } while(checaLocal(this.tabuleiro, linha, coluna) == false);
 	    
 	    
-	    tabuleiro[linha][coluna] = 1;
+	    this.tabuleiro[linha][coluna] = 1;
   }
   
-  public static No max(No raiz) {//mÃ¡quina
+  public No max(No raiz) {//máquina
 	    vez++;
 	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
 	    
 	    boolean run = true;
 	    int i = 0;
-	    while(run && i < DIM) {//se for a primeira iteraÃ§Ã£o gere a primeira jogada
+	    while(run && i < DIM) {//se for a primeira iteração gere a primeira jogada
 	    	for (int j = 0; j < DIM; j++) {
-	    		if(tabuleiro[i][j] != 0) {
+	    		if(this.tabuleiro[i][j] != 0) {
 	    			run = false;
 	    			break;
 	    		}
@@ -77,20 +79,31 @@ class Jogar {
 	    }
 	    if (true == run) {
 	    	No filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
-    		tabuleiro = Arvore.tabCopy(filho.tabuleiro);
+	    	this.tabuleiro = Arvore.tabCopy(filho.tabuleiro);
     		return filho;
 	    }
 	    			
 	    for (No filho : raiz.filhos){
 	    	
-	    	if(filho.tabuleiro.equals(tabuleiro)) {
-                        No newFilho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
-	    		tabuleiro = Arvore.tabCopy(newFilho.tabuleiro);
+	    	if(equals(filho.tabuleiro, this.tabuleiro)) {
+                No newFilho = melhorJogada(filho);//retorna o filho que tem a melhor jogada
+                this.tabuleiro = Arvore.tabCopy(newFilho.tabuleiro);
 	    		return newFilho;
 	    	}
 	    }
-	    System.out.println("\tERROR\n O sistema nÃ£o detectou uma boa jogada");
+	    System.out.println("\tERROR\n O sistema não detectou uma boa jogada");
 	    return null;
+  }
+  
+  public boolean equals(int tab1[][], int tab2[][]) {
+	  for (int i = 0; i < DIM; i++) {
+		  for (int j = 0; j < DIM; j++) {
+			  if (tab1[i][j] != tab2[i][j]) 
+				  return false;
+			  
+		  }
+	  }
+	  return true;
   }
   
   public static No melhorJogada(No raiz) {
@@ -173,7 +186,7 @@ class Jogar {
 	 
 	    return true;
 	}
-	//retorna 0 para empate 1 terminou -1 nÃ£o terminou
+	//retorna 0 para empate 1 terminou -1 não terminou
   	static boolean checaTermino(int tabuleiro[][], int vez) {
 	    if(checaLinha(tabuleiro)) {
 	        System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
