@@ -1,14 +1,16 @@
 package main;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 class Jogar {
-	public static int[][] tabuleiro = new int[MainVelha.DIM][MainVelha.DIM];
+        public final static int DIM = 3;
+	public static int[][] tabuleiro = new int[DIM][DIM];
 	static Scanner entrada = new Scanner(System.in);
-	public final static int DIM = MainVelha.DIM;
-	 
-	public Jogar(int tabuleiro[][]) {
-	  	Jogar.tabuleiro = tabuleiro;
+	public static int vez;
+	
+        public Jogar() {
+                Jogar.vez=1;
 	  	jogar();
 	}
   
@@ -18,27 +20,27 @@ class Jogar {
 	public static void jogar() {
 		zeraTabuleiro(tabuleiro);
 		No arvore = new No(tabuleiro);
-		new Arvore();
-		Arvore.geraTabuleiro(arvore, MainVelha.vez);//gera o primeiro tabuleiro para evitar bugs
 		
-		Arvore.gerarArvore(arvore);// gera toda a �rvore do min max
+		Arvore.geraTabuleiro(arvore, vez);//gera o primeiro tabuleiro para evitar bugs
+		
+		Arvore.gerarArvore(arvore);// gera toda a árvore do min max
 		
 		do {
-		  	exibeTabuleiro(arvore.tabuleiro);
+		  	exibeTabuleiro(tabuleiro);
 		  	arvore = max(arvore);
 		    
-		  	if (checaTermino(tabuleiro, MainVelha.vez)) break;
+		  	if (checaTermino(tabuleiro, vez)) break;
 		
 		  	exibeTabuleiro(tabuleiro);
 		  	min();
 		  
-		}while(!checaTermino(tabuleiro, MainVelha.vez));
+		}while(!checaTermino(tabuleiro, vez));
 	}
 
   public static void min() {//jogador
     	int linha, coluna;
-	    MainVelha.vez++;
-	    System.out.println("\n--> Jogador " + ((MainVelha.vez % 2) + 1));
+	    vez++;
+	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
 	 
 	    do {
 	    	System.out.print("Linha: ");
@@ -58,13 +60,13 @@ class Jogar {
 	    tabuleiro[linha][coluna] = 1;
   }
   
-  public static No max(No raiz) {//m�quina
-	    MainVelha.vez++;
-	    System.out.println("\n--> Jogador " + ((MainVelha.vez % 2) + 1));
+  public static No max(No raiz) {//máquina
+	    vez++;
+	    System.out.println("\n--> Jogador " + ((vez % 2) + 1));
 	    
 	    boolean run = true;
 	    int i = 0;
-	    while(run && i < DIM) {
+	    while(run && i < DIM) {//se for a primeira iteração gere a primeira jogada
 	    	for (int j = 0; j < DIM; j++) {
 	    		if(tabuleiro[i][j] != 0) {
 	    			run = false;
@@ -73,7 +75,7 @@ class Jogar {
 	    	}
 	    	i++;
 	    }
-	    if (run = true) {
+	    if (true == run) {
 	    	No filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
     		tabuleiro = Arvore.tabCopy(filho.tabuleiro);
     		return filho;
@@ -82,12 +84,12 @@ class Jogar {
 	    for (No filho : raiz.filhos){
 	    	
 	    	if(filho.tabuleiro.equals(tabuleiro)) {
-	    		filho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
-	    		tabuleiro = Arvore.tabCopy(filho.tabuleiro);
-	    		return filho;
+                        No newFilho = melhorJogada(raiz);//retorna o filho que tem a melhor jogada
+	    		tabuleiro = Arvore.tabCopy(newFilho.tabuleiro);
+	    		return newFilho;
 	    	}
 	    }
-	    
+	    System.out.println("\tERROR\n O sistema não detectou uma boa jogada");
 	    return null;
   }
   
@@ -171,7 +173,7 @@ class Jogar {
 	 
 	    return true;
 	}
-	//retorna 0 para empate 1 terminou -1 n�o terminou
+	//retorna 0 para empate 1 terminou -1 não terminou
   	static boolean checaTermino(int tabuleiro[][], int vez) {
 	    if(checaLinha(tabuleiro)) {
 	        System.out.println("Jogo encerrado. Jogador " + ((vez%2)+1) + " venceu !\n");
@@ -219,13 +221,17 @@ class Jogar {
 	
 	  for(linha = 0 ; linha < DIM ; linha++) {
 	      for(coluna = 0 ; coluna < DIM ; coluna++) {
-	          if(tabuleiro[linha][coluna] == 0)
-	              System.out.print("    ");
-	          else
-	              if(tabuleiro[linha][coluna] == 1)
-	                  System.out.print("  X ");
-	              else
-	                  System.out.print("  O ");
+                  switch (tabuleiro[linha][coluna]) {
+                      case 0:
+                          System.out.print("    ");
+                          break;
+                      case 1:
+                          System.out.print("  X ");
+                          break;
+                      default:
+                          System.out.print("  O ");
+                          break;
+                  }
 	
 	          if(coluna != (DIM-1))
 	              System.out.print("|");

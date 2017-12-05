@@ -3,21 +3,16 @@ package main;
 import java.util.Scanner;
 
 class MainVelha {
-    public final static int DIM = 3;
 	static Scanner entrada = new Scanner(System.in);
-	public static int vez;
 	static boolean continuar;
   
 	public static void main(String[] args) {
-		//TODO Auto-generated method stub
-		 
-		int[][] tabuleiro = new int[DIM][DIM];
+	//TODO Auto-generated method stub
       	
 	    do {
-	        vez=1;
 	        continuar = menu();
 	        if(continuar) {
-	            new Jogar(tabuleiro);
+	            new Jogar();
 	            
 	        }
 	    }while(continuar);

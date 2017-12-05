@@ -1,22 +1,21 @@
 package main;
 
 public class Arvore {
-	static final int DIM = MainVelha.DIM;
+	static final int DIM = Jogar.DIM;
 	
 	public Arvore(){
 		
 	}
 	
 	////////////
-	///árvore///
+	///Ã¡rvore///
 	////////////
 	
 	public static int gerarArvore(No raiz) {
 		int run = 0;
 		
-		for (No filho : raiz.filhos) {
-		  	MainVelha.vez++;
-		  	run = geraTabuleiro(filho, MainVelha.vez);
+		for (No filho : raiz.filhos) {		  	
+		  	run = geraTabuleiro(filho, Jogar.vez);
 		  	if (run != 1) {
 		  		gerarArvore(filho);
 		  		raiz.generateUtility(raiz);
@@ -35,10 +34,11 @@ public class Arvore {
 	//Gerar tab//
 	/////////////
 	public static int geraTabuleiro(No raiz, int vez) {
+                Jogar.vez++;
 		//retorna se o da vez ganhou ou n
 		int linha  = 0;
 		int coluna = 0;
-		int end = 0;//para saber quantas posições vagas
+		int end = 0;//para saber quantas posiÃ§Ãµes vagas
 		int[][] newTabuleiro = new int[DIM][DIM];
 		newTabuleiro = tabCopy(raiz.tabuleiro);
 	
@@ -77,9 +77,9 @@ public class Arvore {
 	  	coluna++;
 		}//end while
 		if (end<=1)
-			return 1;//não ha mais possibilidades
+			return 1;//nÃ£o ha mais possibilidades
 		
-		return 0;//não terminou
+		return 0;//nÃ£o terminou
 	}
 	
 	public static int[][] tabCopy(int[][] tab) {
